@@ -1,31 +1,43 @@
-# src/models/model_selector.py
-
+import numpy as np
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-import xgboost as xgb
-from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
 
-def get_models():
-    return {
-        'SVM': SVC(probability=True, random_state=42),
-        'LogisticRegression': LogisticRegression(max_iter=1000, random_state=42),
-        'RandomForest': RandomForestClassifier(random_state=42),
-        'XGBoost': xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+def train_and_select_model(X, y):
+    cv = KFold(n_splits=5, shuffle=True, random_state=42)
+
+    models = {
+        "SVM": Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", SVC(probability=True, random_state=42))
+        ]),
+        "LogisticRegression": Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", LogisticRegression(max_iter=2000, random_state=42))
+        ]),
+        "RandomForest": RandomForestClassifier(random_state=42),
+        "XGBoost": XGBClassifier(eval_metric='logloss', use_label_encoder=False, random_state=42)
     }
 
-def train_and_evaluate(X_train, y_train, X_val, y_val):
-    models = get_models()
-    results = {}
-    for name, model in models.items():
-        model.fit(X_train, y_train)
-        preds = model.predict(X_val)
-        acc = accuracy_score(y_val, preds)
-        results[name] = {'model': model, 'accuracy': acc}
-        print(f"{name} accuracy: {acc:.4f}")
-    best_model_name = max(results, key=lambda k: results[k]['accuracy'])
-    print(f"Best model: {best_model_name} with accuracy {results[best_model_name]['accuracy']:.4f}")
-    return results[best_model_name]['model'], results
+    best_score = 0
+    best_model = None
+    best_model_name = ""
 
-if __name__ == "__main__":
-    print("Run this module with real data and train/test splits")
+    for name, model in models.items():
+        print(f"[INFO] Training model: {name}")
+        scores = cross_val_score(model, X, y, cv=cv, scoring="accuracy")
+        mean_score = np.mean(scores)
+        print(f"[INFO] {name} CV Accuracy: {mean_score:.4f}")
+
+        if mean_score > best_score:
+            best_score = mean_score
+            best_model = model
+            best_model_name = name
+
+    print(f"[INFO] Best model: {best_model_name} (Accuracy: {best_score:.4f})")
+    best_model.fit(X, y)
+    return best_model, best_model_name
