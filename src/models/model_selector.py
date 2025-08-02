@@ -23,30 +23,41 @@ class ModelSelector:
         """Initialize models with class balancing and optimal defaults"""
         return {
             'random_forest': RandomForestClassifier(
+                n_estimators=100,  # Reduced from default
+                max_depth=5,  # Added depth limit
+                min_samples_split=5,  # Increased from default 2
                 class_weight='balanced',
-                n_estimators=200,
-                max_depth=10,
                 random_state=42
             ),
             'xgboost': XGBClassifier(
-                scale_pos_weight=self._calculate_scale_pos_weight(),
-                eval_metric='logloss',
-                use_label_encoder=False
+                max_depth=3,  # Shallower trees
+                learning_rate=0.1,  # Lower learning rate
+                subsample=0.8,  # Stochastic sampling
+                colsample_bytree=0.8,  # Feature subsampling
+                reg_alpha=0.1,  # L1 regularization
+                reg_lambda=1.0,  # L2 regularization
+                eval_metric='logloss'
             ),
             'svm': SVC(
-                class_weight='balanced',
-                probability=True,
+                C=1.0,  # Inverse regularization strength
                 kernel='rbf',
-                random_state=42
+                gamma='scale',  # Automatic kernel coefficient
+                probability=True,
+                class_weight='balanced'
             ),
             'logistic_regression': LogisticRegression(
-                class_weight='balanced',
+                penalty='l2',  # Ridge regularization
+                C=1.0,  # Inverse of regularization strength
+                solver='liblinear',
                 max_iter=1000,
-                solver='liblinear'
+                class_weight='balanced'
             ),
             'gradient_boosting': GradientBoostingClassifier(
-                n_estimators=200,
-                max_depth=5,
+                n_estimators=100,
+                learning_rate=0.1,
+                max_depth=3,
+                min_samples_leaf=5,
+                subsample=0.8,
                 random_state=42
             )
         }
