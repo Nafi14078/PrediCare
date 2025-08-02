@@ -10,3 +10,5 @@ pyyaml
 imbalanced-learn
 lightgbm
 tensorflow
+flask==2.3.2
+tqdm==4.65.0

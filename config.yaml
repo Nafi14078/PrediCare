@@ -1,0 +1,15 @@
+data:
+  heart_disease: data/raw/heart_disease.csv
+  diabetes: data/raw/diabetes.csv
+  breast_cancer: data/raw/breast_cancer.csv
+
+models:
+  save_path: "saved_models/"
+  heart_disease_model: "heart_disease_model.pkl"  # Consistent naming
+  diabetes_model: "diabetes_model.pkl"
+  breast_cancer_model: "breast_cancer_model.pkl"
+
+training:
+  test_size: 0.2
+  random_state: 42
+  metrics: ['accuracy', 'precision', 'recall', 'f1']
