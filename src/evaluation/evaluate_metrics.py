@@ -1,8 +1,10 @@
 # src/evaluation/evaluate_metrics.py
+import os
 
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score, f1_score,
                              confusion_matrix, classification_report)
+from sklearn.model_selection import learning_curve
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,3 +43,25 @@ class Evaluator:
 
         if classes:
             Evaluator.plot_confusion_matrix(y_true, y_pred, classes)
+
+
+def plot_learning_curve(estimator, X, y, cv=5, scoring='f1_weighted'):
+    # Create reports directory if needed
+        os.makedirs("reports/figures", exist_ok=True)
+
+
+        train_sizes, train_scores, test_scores = learning_curve(
+            estimator, X, y, cv=cv, scoring=scoring,
+            n_jobs=-1, train_sizes=np.linspace(0.1, 1.0, 10)
+        )
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(train_sizes, np.mean(train_scores, axis=1), 'o-', label="Training score")
+        plt.plot(train_sizes, np.mean(test_scores, axis=1), 'o-', label="Cross-validation score")
+        plt.title(f"Learning Curve ({estimator.__class__.__name__})")
+        plt.xlabel("Training examples")
+        plt.ylabel(scoring)
+        plt.legend()
+        plt.grid()
+        plt.savefig(f"reports/figures/{estimator.__class__.__name__}_learning_curve.png")
+        plt.close()

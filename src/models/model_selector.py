@@ -39,7 +39,7 @@ class ModelSelector:
                 eval_metric='logloss'
             ),
             'svm': SVC(
-                C=1.0,  # Inverse regularization strength
+                C=0.5,  # Inverse regularization strength
                 kernel='rbf',
                 gamma='scale',  # Automatic kernel coefficient
                 probability=True,

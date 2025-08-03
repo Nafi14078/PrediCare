@@ -3,6 +3,7 @@ import yaml
 from sklearn.model_selection import train_test_split
 from src.models.model_selector import ModelSelector
 from src.preprocessing.clean_data import load_data, preprocess_data
+from src.evaluation.evaluate_metrics import plot_learning_curve
 import joblib
 import pandas as pd
 import os
@@ -50,6 +51,8 @@ class TrainingPipeline:
                 print(f"Error removing {old_model}: {str(e)}")
 
     def train_for_disease(self, disease_type):
+        os.makedirs(self.config['models']['save_path'], exist_ok=True)
+        os.makedirs("reports/figures", exist_ok=True)
         # Add this at the start:
         self._cleanup_old_models(disease_type)
         """Complete training pipeline for a single disease"""
@@ -95,6 +98,9 @@ class TrainingPipeline:
             )
             joblib.dump(model, model_path)
             print(f"Model saved to {model_path}")
+
+            # Generate learning curves
+            plot_learning_curve(model, X_train, y_train)
 
             return model
 
