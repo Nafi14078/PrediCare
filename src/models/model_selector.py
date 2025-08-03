@@ -53,10 +53,10 @@ class ModelSelector:
                 class_weight='balanced'
             ),
             'gradient_boosting': GradientBoostingClassifier(
-                n_estimators=100,
+                n_estimators=150,
                 learning_rate=0.1,
                 max_depth=3,
-                min_samples_leaf=5,
+                min_samples_leaf=10,
                 subsample=0.8,
                 random_state=42
             )
