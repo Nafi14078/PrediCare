@@ -1,0 +1,30 @@
+K-fold cross-validation results:
+  Fold 1: 0.8863
+  Fold 2: 0.8968
+  Fold 3: 0.8783
+  Fold 4: 0.8888
+  Fold 5: 0.8958
+Mean accuracy: 0.8892
+
+Training dataset details:
+  Class distribution:
+    glioma:    1321 images
+    meningioma: 1339 images
+    notumor:   1595 images
+    pituitary: 1457 images
+  Total training images: 5712
+
+For each fold (5-fold CV):
+  Training set size per fold: 4569 images
+  Validation set size per fold: 1143 images
+
+
+Testing dataset details:
+  Class distribution:
+    glioma:    300 images
+    meningioma: 306 images
+    notumor:   405 images
+    pituitary: 300 images
+  Total testing images: 1311
+
+Note: Each image is used in validation exactly once across the CV process.
