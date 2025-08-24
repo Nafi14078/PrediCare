@@ -1,33 +1,26 @@
 import os
-import pandas as pd
-from configparser import ConfigParser
-import yaml
 
 
-def check_datasets(config_path='config.yaml'):
-    """Check if all datasets exist and are valid"""
-    with open(config_path) as f:
-        config = yaml.safe_load(f)
+def check_dataset_integrity(dataset_path):
+    if not os.path.exists(dataset_path):
+        raise FileNotFoundError(f"Dataset path {dataset_path} does not exist.")
 
-    missing_files = []
-    invalid_files = []
+    subfolders = os.listdir(dataset_path)
+    if len(subfolders) == 0:
+        raise ValueError("Dataset directory is empty.")
 
-    for disease, path in config['data'].items():
-        if not os.path.exists(path):
-            missing_files.append(path)
+    for folder in subfolders:
+        folder_path = os.path.join(dataset_path, folder)
+        if not os.path.isdir(folder_path):
             continue
+        files = os.listdir(folder_path)
+        if len(files) == 0:
+            raise ValueError(f"Class folder '{folder}' is empty.")
+        print(f"Class '{folder}': {len(files)} images found.")
 
-        try:
-            df = pd.read_csv(path)
-            if df.empty:
-                invalid_files.append(path)
-        except:
-            invalid_files.append(path)
+    print("Dataset sanity check passed.")
 
-    if missing_files:
-        raise FileNotFoundError(f"Missing files: {missing_files}")
-    if invalid_files:
-        raise ValueError(f"Invalid files: {invalid_files}")
 
-    print("All datasets are valid and present")
-    return True
+if __name__ == "__main__":
+    dataset_path = "data/raw"
+    check_dataset_integrity(dataset_path)

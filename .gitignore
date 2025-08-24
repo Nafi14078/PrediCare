@@ -48,30 +48,15 @@ coverage.xml
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Data files
-*.csv
-*.feather
-*.parquet
-
 # Logs
 *.log
 
-# Model files
-*.pkl
-*.joblib
-*.h5
+# Virtual environment folder
+venv/
+
+data/
+saved_models/
+.idea/
+.scratches/
+Scratches and Consoles/
+
